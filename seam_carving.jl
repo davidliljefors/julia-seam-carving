@@ -26,6 +26,7 @@ path_to_image = "fox.jpg"
 md"# Functions"
 
 # ╔═╡ d07ad360-0d4f-11eb-0dba-a732b6aae9fa
+# Convert RGB to brigthness
 function brightness(img_element::AbstractRGB)
 	return mean((img_element.r + img_element.g + img_element.b))
 end
@@ -40,6 +41,7 @@ function find_energy(img)
 end
 
 # ╔═╡ 646d1eb0-0d5b-11eb-3b93-53b9cbcd6568
+# To help view energy image, normalize values to 0-1
 function normalize_greyness(array)
 	max, _ = findmax(array)
 	array = array./max
@@ -47,11 +49,13 @@ function normalize_greyness(array)
 end
 
 # ╔═╡ cc570100-0d54-11eb-3567-f92edb0103e4
+# Convert a value to RGB to view arrays as images
 function grey_to_rgb(brigthness)::RGB
 	return RGB(brigthness, brigthness, brigthness)
 end
 
 # ╔═╡ c4d15310-0d66-11eb-2583-e95f2789891a
+# Finds the seam of least energy starting at given position
 function find_seam_at(next_elements, element)
 	seam = zeros(Int, size(next_elements)[1])
 	seam[1]	= element
@@ -64,6 +68,7 @@ function find_seam_at(next_elements, element)
 end
 
 # ╔═╡ fd47f780-0d57-11eb-08df-4d70a66c32fe
+# Calculate the combined energy needed for each pixel from bottom to top
 function find_energy_map(energy)
 	energy_map = zeros(size(energy))
 	energy_map[ end, : ] = energy[ end, : ]
@@ -90,6 +95,7 @@ function find_energy_map(energy)
 end
 
 # ╔═╡ fbc4e440-0df7-11eb-32e4-41501f4705e0
+# Finds the best starting point and the seam from there
 function find_seam(energy)
 	energy_map, next_elements = find_energy_map(energy)
 	
@@ -141,6 +147,7 @@ function seam_carving(img, res)
 end
 
 # ╔═╡ 63ad1080-0dff-11eb-1c35-1bfe4f50b2d2
+# Make all carved variants of the original image
 function get_all_carved(img, amount)
 	
 	if(amount < 0 || amount > size(img)[2])
@@ -205,22 +212,18 @@ image_with_best_seam = draw_seam(test_image, best_seam)
 
 # ╔═╡ d6bd64d0-0dff-11eb-14a9-bb38e6821169
 begin
-	#max_reduction = size(test_image)[2] * 0.0
-	#all_carved_images = get_all_carved(test_image, max_reduction)
+	max_reduction = size(test_image)[2] * 0.3
+	all_carved_images = get_all_carved(test_image, max_reduction)
 end
 
 # ╔═╡ 921f64b0-0dfd-11eb-2f36-6315c0dd1c8e
 begin
-#	width = length(all_carved_images)
-#@bind new_width Slider(1:width, default=1, show_value=true)
+	width = length(all_carved_images)
+@bind new_width Slider(1:width, default=1, show_value=true)
 end
 
-# ╔═╡ f38d1bb0-11eb-11eb-3407-cb64e1b9910c
-Text("With all the carved variants we can preview each one in series.
-Commented out to keep the html preview smaller. Refer to video on my website")
-
 # ╔═╡ 258a0da0-0e02-11eb-0cf1-d74bed88538b
-#all_carved_images[new_width]
+all_carved_images[new_width]
 
 # ╔═╡ dc50f700-0dfe-11eb-3cc9-0fc42ab218f5
 test_image
@@ -256,6 +259,5 @@ test_image
 # ╠═51e33f70-0df8-11eb-2627-317c7ed7c508
 # ╠═d6bd64d0-0dff-11eb-14a9-bb38e6821169
 # ╠═921f64b0-0dfd-11eb-2f36-6315c0dd1c8e
-# ╠═f38d1bb0-11eb-11eb-3407-cb64e1b9910c
 # ╠═258a0da0-0e02-11eb-0cf1-d74bed88538b
 # ╠═dc50f700-0dfe-11eb-3cc9-0fc42ab218f5
